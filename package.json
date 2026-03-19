@@ -1,0 +1,19 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "description": "Full-stack portfolio — Next.js + Express + PostgreSQL",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently --names \"API,WEB\" --prefix-colors \"cyan,magenta\" \"npm run dev:server\" \"npm run dev:frontend\"",
+    "dev:server":   "cd server && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:all":  "npm install && cd server && npm install && cd ../frontend && npm install",
+    "db:up":        "docker compose up -d postgres",
+    "db:down":      "docker compose down",
+    "db:logs":      "docker compose logs -f postgres",
+    "build":        "cd frontend && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
