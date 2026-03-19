@@ -4,7 +4,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ProjectCard from "@/components/ui/ProjectCard";
-import { fetchProjects } from "@/lib/api";
+import { fetchProjects, type Project } from "@/lib/api";
 
 export const metadata: Metadata = {
   title: "Projects — Alex Rivera",
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ProjectsPage() {
-  let projects = [];
+  let projects: Project[] = [];
   let error = false;
 
   try {
