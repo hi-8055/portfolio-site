@@ -15,10 +15,21 @@ const app = express();
 // ─── Security Middleware ───────────────────────────────────────────────────
 app.use(helmet());
 
-// CORS — allow only the configured frontend origin
+// CORS — supports comma-separated list of allowed origins
+
+const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:3000")
+  .split(",")
+  .map((o) => o.trim());
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: (origin, callback) => {
+      // Allow requests with no origin (curl, Postman, server-to-server)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      console.warn(`CORS blocked: ${origin}`);
+      callback(new Error(`CORS: origin ${origin} not allowed`));
+    },
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
@@ -26,15 +37,14 @@ app.use(
 
 // ─── Rate Limiting ─────────────────────────────────────────────────────────
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,                  // max 100 requests per window
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: { error: "Too many requests, please try again later." },
 });
 app.use("/api/", limiter);
 
-// Contact form has a tighter limit to prevent spam
 const contactLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
+  windowMs: 60 * 60 * 1000,
   max: 10,
   message: { error: "Too many contact submissions, please try again later." },
 });
@@ -44,10 +54,18 @@ app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 
 // ─── Logging ───────────────────────────────────────────────────────────────
-// Morgan for HTTP logs (short format in dev, combined in prod)
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
-// Custom request/response logger middleware
 app.use(requestLogger);
+
+// ─── Root route ────────────────────────────────────────────────────────────
+app.get("/", (req, res) => {
+  res.json({
+    name: "Portfolio API",
+    version: "1.0.0",
+    status: "running",
+    endpoints: ["/api/health", "/api/projects", "/api/contact"],
+  });
+});
 
 // ─── Routes ────────────────────────────────────────────────────────────────
 app.use("/api/projects", projectRoutes);
