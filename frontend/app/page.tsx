@@ -7,6 +7,8 @@ import Contact from "@/components/sections/Contact";
 import Footer from "@/components/Footer";
 import { fetchFeaturedProjects, type Project } from "@/lib/api";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   // Fetch featured projects server-side (ISR — cached at build, revalidated every 60s)
   let featuredProjects: Project[] = [];

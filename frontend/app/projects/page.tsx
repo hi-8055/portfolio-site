@@ -6,6 +6,8 @@ import Footer from "@/components/Footer";
 import ProjectCard from "@/components/ui/ProjectCard";
 import { fetchProjects, type Project } from "@/lib/api";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Projects — Alex Rivera",
   description: "All projects built by Alex Rivera — full-stack web engineer.",
