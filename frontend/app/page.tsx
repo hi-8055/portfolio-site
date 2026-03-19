@@ -5,11 +5,11 @@ import Skills from "@/components/sections/Skills";
 import Projects from "@/components/sections/Projects";
 import Contact from "@/components/sections/Contact";
 import Footer from "@/components/Footer";
-import { fetchFeaturedProjects } from "@/lib/api";
+import { fetchFeaturedProjects, type Project } from "@/lib/api";
 
 export default async function HomePage() {
   // Fetch featured projects server-side (ISR — cached at build, revalidated every 60s)
-  let featuredProjects = [];
+  let featuredProjects: Project[] = [];
   try {
     featuredProjects = await fetchFeaturedProjects();
   } catch {
